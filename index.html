@@ -181,7 +181,7 @@
       const milestones = [
         {
           title: "Inscrições",
-          start: "2025-05-16T10:00:00-03:00",
+          start: "2025-05-19T10:00:00-03:00",
           end: "2025-06-04T23:59:59-03:00",
         },
         {
@@ -570,22 +570,18 @@
         const collapseBtn = document.getElementById("collapseBtn");
         const bannerSection = document.getElementById("bannerSection");
 
-        // Check localStorage for saved state
-        const isCollapsed = localStorage.getItem("bannerCollapsed") === "true";
-        if (isCollapsed) {
-          bannerSection.classList.add("collapsed");
-          collapseBtn.classList.add("collapsed");
-        }
-
+        // Remove the localStorage check to ensure banner is open by default
+        // Only save state when user clicks the button
         collapseBtn.addEventListener("click", function () {
           bannerSection.classList.toggle("collapsed");
           collapseBtn.classList.toggle("collapsed");
 
-          // Save state to localStorage
-          localStorage.setItem(
-            "bannerCollapsed",
-            bannerSection.classList.contains("collapsed")
-          );
+          // Save state only when user explicitly collapses
+          if (bannerSection.classList.contains("collapsed")) {
+            localStorage.setItem("bannerCollapsed", "true");
+          } else {
+            localStorage.removeItem("bannerCollapsed");
+          }
         });
       });
     </script>
