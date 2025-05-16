@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cronograma CACD 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .banner-title {
+        font-family: "Poppins", sans-serif;
+      }
+      .banner-section {
+        transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        max-height: 1000px;
+        opacity: 1;
+        overflow: hidden;
+      }
+      .banner-section.collapsed {
+        max-height: 0;
+        opacity: 0;
+      }
+      .collapse-button {
+        transition: transform 0.3s ease;
+      }
+      .collapse-button.collapsed {
+        transform: rotate(180deg);
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-sky-50 to-emerald-50 min-h-screen">
+    <!-- Collapse Button -->
+    <button
+      id="collapseBtn"
+      class="collapse-button fixed top-4 right-4 bg-white p-2 rounded-full shadow-md hover:shadow-lg transition-shadow"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 text-gray-600"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 15l7-7 7 7"
+        />
+      </svg>
+    </button>
+
+    <!-- Banner Section -->
+    <div id="bannerSection" class="banner-section bg-white shadow-sm">
+      <div
+        class="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-8"
+      >
+        <div class="flex-1 space-y-4">
+          <h1
+            class="banner-title text-4xl md:text-5xl font-bold text-emerald-500"
+          >
+            Cosmocrata CACD
+          </h1>
+          <p class="text-gray-700 text-lg max-w-2xl">
+            Datas e prazos para o CACD 2025.
+          </p>
+          <p class="text-gray-600">
+            Contribua assinando gratuitamente a nossa newsletter.
+          </p>
+          <a
+            href="https://cosmocrata.substack.com/welcome"
+            target="_blank"
+            class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+          >
+            Assine a newsletter
+          </a>
+        </div>
+        <div class="flex-shrink-0">
+          <img
+            src="datas_cacd.png"
+            alt="Cosmocrata Logo"
+            class="w-48 h-48 object-contain"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-4 py-10">
+      <h1
+        class="text-3xl md:text-4xl font-extrabold text-emerald-700 mb-6 flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-8 w-8 text-emerald-600"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12V5a1 1 0 10-2 0v4a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L11 9.586V6z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        Cronograma CACD 2025
+      </h1>
+
+      <!-- Abas -->
+      <div class="border-b border-gray-200 mb-6">
+        <nav class="-mb-px flex gap-4" id="tabs">
+          <button
+            data-tab="countdown"
+            class="tab-btn text-emerald-600 border-emerald-600 border-b-2 pb-2 font-semibold"
+          >
+            Contagem ⏳
+          </button>
+          <button
+            data-tab="gantt"
+            class="tab-btn text-gray-500 hover:text-emerald-600 pb-2"
+          >
+            Cronograma 📊
+          </button>
+        </nav>
+      </div>
+
+      <!-- Painel Contagem -->
+      <div
+        id="countdown"
+        class="tab-panel grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
+      ></div>
+
+      <!-- Painel Gantt -->
+      <div id="gantt" class="tab-panel hidden">
+        <div id="ganttChart" class="w-full h-[600px]"></div>
+      </div>
+    </div>
+
+    <script>
+      // ========= DADOS =========
+      const milestones = [
+        {
+          title: "Inscrições",
+          start: "2025-05-16T10:00:00-03:00",
+          end: "2025-06-04T23:59:59-03:00",
+        },
+        {
+          title: "Data limite para Pagamento da Inscrição",
+          start: "2025-06-27T23:59:59-03:00",
+        },
+        {
+          title: "Consulta local de prova",
+          start: "2025-07-07T18:00:00-03:00",
+        },
+        { title: "1ª Fase", start: "2025-07-20T09:30:00-03:00" },
+        {
+          title: "Gabarito 1ª Fase",
+          start: "2025-07-22T18:00:00-03:00",
+          end: "2025-07-24T18:00:00-03:00",
+        },
+        {
+          title: "Recursos 1ª Fase",
+          start: "2025-07-23T10:00:00-03:00",
+          end: "2025-07-24T18:00:00-03:00",
+        },
+        {
+          title: "Resultado Final 1ª Fase",
+          start: "2025-08-13T18:00:00-03:00",
+        },
+        {
+          title: "Prova Português - Manhã (4h)",
+          start: "2025-08-23T08:00:00-03:00",
+        },
+        {
+          title: "Prova História do Brasil - Tarde (5h)",
+          start: "2025-08-23T14:00:00-03:00",
+        },
+        {
+          title: "Prova Inglês - Manhã (4h)",
+          start: "2025-08-24T08:00:00-03:00",
+        },
+        {
+          title: "Prova Geografia - Tarde (5h)",
+          start: "2025-08-24T14:00:00-03:00",
+        },
+        {
+          title: "Padrão preliminar 2ª fase - parte 1",
+          start: "2025-08-26T18:00:00-03:00",
+        },
+        {
+          title: "Recursos padrão 2ª fase - parte 1",
+          start: "2025-08-27T10:00:00-03:00",
+          end: "2025-08-29T18:00:00-03:00",
+        },
+        {
+          title: "Prova Política Internacional - Manhã (5h)",
+          start: "2025-08-30T08:00:00-03:00",
+        },
+        {
+          title: "Prova Economia - Tarde (5h)",
+          start: "2025-08-30T15:00:00-03:00",
+        },
+        {
+          title: "Prova Direito - Manhã (5h)",
+          start: "2025-08-31T08:00:00-03:00",
+        },
+        {
+          title: "Prova Espanhol/Francês - Tarde (4h)",
+          start: "2025-08-31T15:00:00-03:00",
+        },
+        {
+          title: "Padrão preliminar 2ª fase - parte 2",
+          start: "2025-09-02T18:00:00-03:00",
+        },
+        {
+          title: "Recursos padrão 2ª fase - parte 2",
+          start: "2025-09-03T10:00:00-03:00",
+          end: "2025-09-05T18:00:00-03:00",
+        },
+        {
+          title: "Resultado Provisório 2ª Fase",
+          start: "2025-09-23T18:00:00-03:00",
+        },
+      ];
+
+      // ========= GANTT =========
+      function renderGantt() {
+        // Função auxiliar para ajustar datas para America/Sao Paulo
+        function adjustToSaoPaulo(dateStr) {
+          const date = new Date(dateStr);
+          return new Date(
+            date.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" })
+          );
+        }
+
+        const options = {
+          series: [
+            {
+              data: milestones.map((m) => ({
+                x: m.title,
+                y: [
+                  adjustToSaoPaulo(m.start).getTime(),
+                  adjustToSaoPaulo(
+                    m.end || new Date(m.start).getTime() + 86400000
+                  ).getTime(),
+                ],
+              })),
+            },
+          ],
+          chart: {
+            type: "rangeBar",
+            height: 600,
+            fontFamily: "Inter, sans-serif",
+            toolbar: { show: true },
+            zoom: { enabled: true },
+          },
+          plotOptions: {
+            bar: {
+              horizontal: true,
+              borderRadius: 4,
+              barHeight: "80%",
+            },
+          },
+          colors: ["#059669"],
+          xaxis: {
+            type: "datetime",
+            labels: {
+              datetimeUTC: false,
+              format: "dd/MM/yyyy",
+              style: {
+                fontSize: "12px",
+              },
+            },
+            axisBorder: {
+              show: true,
+            },
+            axisTicks: {
+              show: true,
+            },
+          },
+          yaxis: {
+            labels: {
+              style: {
+                fontSize: "12px",
+              },
+            },
+          },
+          grid: {
+            xaxis: {
+              lines: {
+                show: true,
+              },
+            },
+          },
+          tooltip: {
+            custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+              const data = w.config.series[seriesIndex].data[dataPointIndex];
+              const startDate = new Date(data.y[0]).toLocaleString("pt-BR", {
+                timeZone: "America/Sao_Paulo",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              });
+              const endDate = new Date(data.y[1]).toLocaleString("pt-BR", {
+                timeZone: "America/Sao_Paulo",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              });
+              return `
+                <div class="p-2">
+                  <strong>${data.x}</strong><br>
+                  Início: ${startDate}<br>
+                  ${data.y[0] !== data.y[1] ? `Fim: ${endDate}` : ""}
+                </div>
+              `;
+            },
+          },
+          annotations: {
+            xaxis: [
+              {
+                x: adjustToSaoPaulo("2025-05-01").getTime(),
+                x2: adjustToSaoPaulo("2025-06-01").getTime(),
+                borderColor: "#c5c5c5",
+                label: {
+                  text: "Maio",
+                  orientation: "horizontal",
+                  position: "top",
+                  offsetY: -25,
+                  style: {
+                    background: "#fff",
+                    padding: "0 4px",
+                  },
+                },
+              },
+              {
+                x: adjustToSaoPaulo("2025-06-01").getTime(),
+                x2: adjustToSaoPaulo("2025-07-01").getTime(),
+                borderColor: "#c5c5c5",
+                label: {
+                  text: "Junho",
+                  orientation: "horizontal",
+                  position: "top",
+                  offsetY: -25,
+                  style: {
+                    background: "#fff",
+                    padding: "0 4px",
+                  },
+                },
+              },
+              {
+                x: adjustToSaoPaulo("2025-07-01").getTime(),
+                x2: adjustToSaoPaulo("2025-08-01").getTime(),
+                borderColor: "#c5c5c5",
+                label: {
+                  text: "Julho",
+                  orientation: "horizontal",
+                  position: "top",
+                  offsetY: -25,
+                  style: {
+                    background: "#fff",
+                    padding: "0 4px",
+                  },
+                },
+              },
+              {
+                x: adjustToSaoPaulo("2025-08-01").getTime(),
+                x2: adjustToSaoPaulo("2025-09-01").getTime(),
+                borderColor: "#c5c5c5",
+                label: {
+                  text: "Agosto",
+                  orientation: "horizontal",
+                  position: "top",
+                  offsetY: -25,
+                  style: {
+                    background: "#fff",
+                    padding: "0 4px",
+                  },
+                },
+              },
+              {
+                x: adjustToSaoPaulo("2025-09-01").getTime(),
+                x2: adjustToSaoPaulo("2025-10-01").getTime(),
+                borderColor: "#c5c5c5",
+                label: {
+                  text: "Setembro",
+                  orientation: "horizontal",
+                  position: "top",
+                  offsetY: -25,
+                  style: {
+                    background: "#fff",
+                    padding: "0 4px",
+                  },
+                },
+              },
+              {
+                // Linha vertical NOW
+                x: adjustToSaoPaulo(new Date().toISOString()).getTime(),
+                strokeDashArray: 0,
+                borderColor: "#FF0000",
+                label: {
+                  text: "HOJE",
+                  orientation: "horizontal",
+                  offsetY: 20,
+                  style: {
+                    background: "#FF0000",
+                    color: "#fff",
+                    padding: "2px 4px",
+                    borderRadius: "3px",
+                  },
+                },
+              },
+            ],
+          },
+        };
+
+        const chart = new ApexCharts(
+          document.querySelector("#ganttChart"),
+          options
+        );
+        chart.render();
+      }
+
+      // ========= CARTÕES DE CONTAGEM =========
+      function createCountdownCards() {
+        const container = document.getElementById("countdown");
+        container.innerHTML = ""; // Limpa o container antes de adicionar os cards
+
+        milestones.forEach((m, idx) => {
+          const card = document.createElement("div");
+          card.className =
+            "bg-white shadow-md rounded-xl p-4 flex flex-col justify-between";
+
+          // Ajusta a data para o fuso horário de São Paulo
+          const startDate = new Date(m.start);
+          const formattedDate = startDate.toLocaleString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          card.innerHTML = `
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">${idx + 1}. ${
+            m.title
+          }</h3>
+            <p class="text-sm text-gray-500 mb-2">${formattedDate}</p>
+            <div class="text-2xl font-bold text-emerald-600" id="cd-${idx}">--d --h --m --s</div>
+    `;
+          container.appendChild(card);
+          m.elementId = `cd-${idx}`;
+        });
+      }
+
+      function updateCountdown() {
+        const now = new Date();
+        const spNow = new Date(
+          now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" })
+        );
+
+        milestones.forEach((m) => {
+          const target = new Date(m.start);
+          const spTarget = new Date(
+            target.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" })
+          );
+          const diff = spTarget - spNow;
+
+          const el = document.getElementById(m.elementId);
+          if (!el) return;
+
+          if (diff <= 0) {
+            el.textContent = "Evento iniciado! 🚀";
+            el.classList.add("text-lg");
+            return;
+          }
+
+          const d = Math.floor(diff / 86400000);
+          const h = Math.floor((diff / 3600000) % 24);
+          const min = Math.floor((diff / 60000) % 60);
+          const s = Math.floor((diff / 1000) % 60);
+          el.textContent = `${String(d).padStart(2, "0")}d ${String(h).padStart(
+            2,
+            "0"
+          )}h ${String(min).padStart(2, "0")}m ${String(s).padStart(2, "0")}s`;
+        });
+      }
+
+      // ========= INICIALIZAÇÃO =========
+      document.addEventListener("DOMContentLoaded", function () {
+        // Criar cards de contagem regressiva
+        createCountdownCards();
+
+        // Iniciar contagem regressiva
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Configurar troca de abas
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tab = btn.dataset.tab;
+            document
+              .querySelectorAll(".tab-btn")
+              .forEach((b) =>
+                b.classList.remove(
+                  "text-emerald-600",
+                  "border-emerald-600",
+                  "border-b-2",
+                  "font-semibold"
+                )
+              );
+            btn.classList.add(
+              "text-emerald-600",
+              "border-emerald-600",
+              "border-b-2",
+              "font-semibold"
+            );
+            document
+              .querySelectorAll(".tab-panel")
+              .forEach((p) => p.classList.add("hidden"));
+            document.getElementById(tab).classList.remove("hidden");
+            if (tab === "gantt" && !window.__ganttRendered) {
+              renderGantt();
+              window.__ganttRendered = true;
+            }
+          });
+        });
+
+        const collapseBtn = document.getElementById("collapseBtn");
+        const bannerSection = document.getElementById("bannerSection");
+
+        // Check localStorage for saved state
+        const isCollapsed = localStorage.getItem("bannerCollapsed") === "true";
+        if (isCollapsed) {
+          bannerSection.classList.add("collapsed");
+          collapseBtn.classList.add("collapsed");
+        }
+
+        collapseBtn.addEventListener("click", function () {
+          bannerSection.classList.toggle("collapsed");
+          collapseBtn.classList.toggle("collapsed");
+
+          // Save state to localStorage
+          localStorage.setItem(
+            "bannerCollapsed",
+            bannerSection.classList.contains("collapsed")
+          );
+        });
+      });
+    </script>
+  </body>
+</html>
