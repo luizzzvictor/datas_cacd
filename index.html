@@ -507,11 +507,25 @@
           );
           const diff = spTarget - spNow;
 
+          // Calcula diferenca para o fim, se existir
+          let endDiff = null;
+          if (m.end) {
+            const end = new Date(m.end);
+            const spEnd = new Date(
+              end.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" })
+            );
+            endDiff = spEnd - spNow;
+          }
+
           const el = document.getElementById(m.elementId);
           if (!el) return;
 
           if (diff <= 0) {
-            el.textContent = "Evento iniciado! 🚀";
+            if (endDiff !== null && endDiff <= 0) {
+              el.textContent = "Evento encerrado! ✅";
+            } else {
+              el.textContent = "Evento iniciado! 🚀";
+            }
             el.classList.add("text-lg");
             return;
           }
