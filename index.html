@@ -521,7 +521,9 @@
           if (!el) return;
 
           if (diff <= 0) {
-            if (endDiff !== null && endDiff <= 0) {
+
+            if (!m.end || (endDiff !== null && endDiff <= 0)) {
+
               el.textContent = "Evento encerrado! ✅";
             } else {
               el.textContent = "Evento iniciado! 🚀";
